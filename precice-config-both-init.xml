@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+
+<precice-configuration>
+  <solver-interface dimensions="3" >
+   
+    <data:scalar name="Force"  />
+    <data:scalar name="Displacement"  />
+
+    <mesh name="Fluid-Mesh">
+      <use-data name="Force" />
+      <use-data name="Displacement" />
+    </mesh>
+
+    <mesh name="Solid-Mesh">
+      <use-data name="Force" />
+      <use-data name="Displacement" />
+    </mesh>
+
+    <participant name="Fluid">
+      <use-mesh name="Fluid-Mesh" provide="yes"/>
+      <write-data name="Force" mesh="Fluid-Mesh" />
+      <read-data  name="Displacement" mesh="Fluid-Mesh" />
+    </participant>
+
+    <participant name="Solid">
+      <use-mesh name="Fluid-Mesh" from="Fluid"/>
+      <use-mesh name="Solid-Mesh" provide="yes"/>
+      <mapping:nearest-neighbor   direction="write" from="Solid-Mesh" to="Fluid-Mesh" constraint="conservative"/>
+      <mapping:nearest-neighbor direction="read"  from="Fluid-Mesh" to="Solid-Mesh" constraint="consistent" />
+      <write-data name="Displacement" mesh="Solid-Mesh" />
+      <read-data  name="Force" mesh="Solid-Mesh" />
+    </participant>
+
+    <m2n:sockets from="Fluid" to="Solid"/>
+
+    <coupling-scheme:parallel-implicit> 
+      <participants first="Fluid" second="Solid" /> 
+      <max-time-windows value="2" />
+      <time-window-size value="1.0" />
+      <max-iterations value="2" />
+      <min-iteration-convergence-measure min-iterations="5" data="Force" mesh="Fluid-Mesh"/>
+      <exchange data="Force" mesh="Fluid-Mesh" from="Fluid" to="Solid" initialize="true"/>
+      <exchange data="Displacement" mesh="Fluid-Mesh" from="Solid" to="Fluid" initialize="true"/>
+    </coupling-scheme:parallel-implicit>                           
+  </solver-interface>
+
+</precice-configuration>
