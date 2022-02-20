@@ -28,7 +28,7 @@
       <mapping:nearest-neighbor   direction="write" from="Solid-Mesh" to="Fluid-Mesh" constraint="conservative"/>
       <mapping:nearest-neighbor direction="read"  from="Fluid-Mesh" to="Solid-Mesh" constraint="consistent" />
       <write-data name="Displacement" mesh="Solid-Mesh" />
-      <read-data  name="Force" mesh="Solid-Mesh" waveform-order="10"/>
+      <read-data  name="Force" mesh="Solid-Mesh" waveform-order="1"/>
     </participant>
 
     <m2n:sockets from="Fluid" to="Solid"/>
